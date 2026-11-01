@@ -1,0 +1,60 @@
+name: Publish website
+
+# Puts the calculator online at https://YOUR-USERNAME.github.io/adulting-calculator/
+# One-time setup first: Settings > Pages > Source: GitHub Actions.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  website:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Get the project
+        uses: actions/checkout@v4
+
+      - name: Put the website together
+        run: |
+          mkdir site
+          cp www/index.html site/index.html
+          cp web/* site/
+          python3 - <<'PY'
+          p = 'site/index.html'
+          s = open(p, encoding='utf-8').read()
+          extra = '''<link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Cinzel:wght@600;700&family=Rye&family=Metal+Mania&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+          <link rel="manifest" href="manifest.webmanifest">
+          <link rel="icon" type="image/png" href="favicon-32.png">
+          <link rel="apple-touch-icon" href="apple-touch-icon.png">
+          <meta name="apple-mobile-web-app-capable" content="yes">
+          <meta name="mobile-web-app-capable" content="yes">
+          <meta name="apple-mobile-web-app-title" content="Adulting Calc">
+          <meta name="description" content="A free money app that shows how small changes add up: loan payoff, personal loans, VA disability pay, budget, savings goals and a bill calendar.">
+          <script>if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+          '''
+          s = s.replace('</head>', extra + '</head>', 1)
+          open(p, 'w', encoding='utf-8').write(s)
+          PY
+
+      - name: Upload the website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Publish it
+        id: deployment
+        uses: actions/deploy-pages@v4
