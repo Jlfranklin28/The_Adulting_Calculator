@@ -8,20 +8,25 @@ on:
 permissions:
   contents: write
 
+# The project lives in the adulting-calculator-app folder.
+defaults:
+  run:
+    working-directory: adulting-calculator-app
+
 jobs:
   android:
     runs-on: ubuntu-latest
     steps:
       - name: Get the project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
@@ -39,8 +44,8 @@ jobs:
         run: npx cap sync android
 
       - name: Build the app
-        working-directory: android
         run: |
+          cd android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
           cp app/build/outputs/apk/debug/app-debug.apk ../The-Adulting-Calculator.apk
@@ -49,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: The-Adulting-Calculator-Android
-          path: The-Adulting-Calculator.apk
+          path: adulting-calculator-app/The-Adulting-Calculator.apk
 
       - name: Post a download link on the Releases page
         env:
