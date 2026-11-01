@@ -1,6 +1,6 @@
 name: Publish website
 
-# Puts the calculator online at https://YOUR-USERNAME.github.io/adulting-calculator/
+# Puts the calculator online at your GitHub Pages address.
 # One-time setup first: Settings > Pages > Source: GitHub Actions.
 on:
   push:
@@ -16,6 +16,11 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# The project lives in the adulting-calculator-app folder.
+defaults:
+  run:
+    working-directory: adulting-calculator-app
+
 jobs:
   website:
     runs-on: ubuntu-latest
@@ -24,7 +29,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Get the project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Put the website together
         run: |
@@ -53,7 +58,7 @@ jobs:
       - name: Upload the website
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: adulting-calculator-app/site
 
       - name: Publish it
         id: deployment
