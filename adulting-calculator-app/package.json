@@ -1,0 +1,24 @@
+{
+  "name": "adulting-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Adulting Calculator: loans, VA disability, budget, savings goals and bill calendar. Runs fully offline.",
+  "scripts": {
+    "sync": "npx cap sync",
+    "android": "npx cap open android",
+    "ios": "npx cap open ios",
+    "icons": "npx @capacitor/assets generate --iconBackgroundColor '#1F5A41' --splashBackgroundColor '#1F5A41' --splashBackgroundColorDark '#101814'"
+  },
+  "dependencies": {
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/ios": "^7.0.0",
+    "@capacitor/filesystem": "^7.0.0",
+    "@capacitor/share": "^7.0.0",
+    "@capacitor/local-notifications": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/assets": "^3.0.5"
+  }
+}

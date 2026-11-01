@@ -1,0 +1,8 @@
+{
+  "appId": "com.adultingcalculator.app",
+  "appName": "The Adulting Calculator",
+  "webDir": "www",
+  "android": {
+    "adjustMarginsForEdgeToEdge": "auto"
+  }
+}

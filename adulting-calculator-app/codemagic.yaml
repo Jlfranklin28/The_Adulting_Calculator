@@ -1,0 +1,39 @@
+# iPhone build on Codemagic's cloud Macs (needed because iPhone apps can only be built on a Mac).
+# Requires an Apple Developer account. See README.md, "iPhone".
+workflows:
+  ios-testflight:
+    name: iPhone app (TestFlight)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Adulting Calculator key
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.adultingcalculator.app
+      node: 22
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install Capacitor
+        script: npm install
+      - name: Create the iPhone project
+        script: npx cap add ios
+      - name: Make the app icon and splash screen
+        script: npx @capacitor/assets generate --ios --iconBackgroundColor '#1F5A41' --splashBackgroundColor '#1F5A41' --splashBackgroundColorDark '#101814'
+      - name: Copy the app into the iPhone project
+        script: npx cap sync ios
+      - name: Set up code signing
+        script: xcode-project use-profiles
+      - name: Set the build number
+        script: |
+          cd ios/App
+          agvtool new-version -all $(($BUILD_NUMBER + 1))
+      - name: Build the iPhone app
+        script: xcode-project build-ipa --workspace "ios/App/App.xcworkspace" --scheme "App"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
